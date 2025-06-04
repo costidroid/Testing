@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Admitere UPB</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #003366;
+            --primary-dark: #002244;
+            --secondary: #E31E24;
+            --secondary-light: #ff4757;
+            --light: #f5f5f5;
+            --dark: #333;
+            --gray: #e0e0e0;
+            --success: #2ecc71;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            height: 90vh;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        header {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid var(--secondary);
+        }
+        
+        h1 {
+            color: white;
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .logo {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.85;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+        
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            overflow: hidden;
+        }
+        
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 15px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .message {
+            padding: 15px 20px;
+            border-radius: 20px;
+            max-width: 85%;
+            animation: fadeIn 0.3s ease;
+            position: relative;
+            line-height: 1.5;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .user-message {
+            background: var(--secondary);
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+            color: white;
+            box-shadow: 0 4px 10px rgba(227, 30, 36, 0.3);
+        }
+        
+        .bot-message {
+            background: rgba(255, 255, 255, 0.15);
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .bot-message ul, .bot-message ol {
+            padding-left: 25px;
+            margin: 12px 0;
+        }
+        
+        .bot-message li {
+            margin-bottom: 8px;
+        }
+        
+        .input-area {
+            display: flex;
+            gap: 10px;
+            margin-top: auto;
+        }
+        
+        input {
+            flex: 1;
+            padding: 16px 20px;
+            border: none;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        input:focus {
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 0 0 2px var(--secondary);
+        }
+        
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        button {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 0 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(227, 30, 36, 0.4);
+        }
+        
+        button:hover {
+            background: var(--secondary-light);
+            transform: translateY(-2px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+            justify-content: center;
+        }
+        
+        .suggestion {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 10px 18px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .suggestion:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        .info-bar {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            margin: 15px 0;
+        }
+        
+        .info-item {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .info-icon {
+            font-size: 1.2rem;
+            color: var(--secondary);
+        }
+        
+        .info-value {
+            font-weight: bold;
+            color: var(--secondary);
+            font-size: 1.1rem;
+        }
+        
+        .ai-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-top: 10px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .ai-indicator .ai-icon {
+            color: #4d9fef;
+        }
+        
+        .typing-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 5px;
+        }
+        
+        .typing-indicator span {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #4d9fef;
+            opacity: 0.6;
+            animation: pulse 1.5s infinite;
+        }
+        
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.5s;
+        }
+        
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 1s;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+        
+        .faculty-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin: 0 3px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        
+        .info-link {
+            color: #4d9fef;
+            text-decoration: none;
+            border-bottom: 1px dashed rgba(77, 159, 239, 0.5);
+            transition: all 0.3s;
+        }
+        
+        .info-link:hover {
+            color: #6bb1ff;
+            border-bottom: 1px dashed #6bb1ff;
+        }
+        
+        .timestamp {
+            font-size: 0.7rem;
+            opacity: 0.6;
+            display: block;
+            margin-top: 5px;
+            text-align: right;
+        }
+        
+        .response-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 0.9rem;
+        }
+        
+        .response-table th, .response-table td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .response-table th {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                height: 95vh;
+                max-width: 100%;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .logo {
+                width: 40px;
+                height: 40px;
+                font-size: 1.5rem;
+            }
+            
+            .info-bar {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .message {
+                max-width: 90%;
+                padding: 12px 16px;
+            }
+            
+            .input-area {
+                flex-direction: column;
+            }
+            
+            button {
+                padding: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><div class="logo"><i class="fas fa-graduation-cap"></i></div> Admitere UPB 2025</h1>
+            <div class="subtitle">Asistent virtual pentru procesul de admitere la Universitatea POLITEHNICA București</div>
+        </header>
+        
+        <div class="chat-area">
+            <div class="info-bar">
+                <div class="info-item">
+                    <div class="info-icon"><i class="fas fa-calendar-alt"></i></div>
+                    <div>Perioadă înscrieri</div>
+                    <div class="info-value">15 iul - 27 iul</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon"><i class="fas fa-file-alt"></i></div>
+                    <div>Documentație</div>
+                    <div class="info-value">admitere.upb.ro</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon"><i class="fas fa-money-bill-wave"></i></div>
+                    <div>Taxă înscriere</div>
+                    <div class="info-value">125 lei</div>
+                </div>
+            </div>
+            
+            <div class="chat-container" id="chatContainer">
+                <div class="message bot-message">
+                    Bună! Sunt asistentul virtual pentru admiterea la UPB. Cu ce te pot ajuta?
+                    <br><br>Poți întreba despre:
+                    <ul>
+                        <li>Calendarul admiterii</li>
+                        <li>Probele la fiecare facultate</li>
+                        <li>Documentele necesare</li>
+                        <li>Taxe și scutiri</li>
+                        <li>Admiterea pentru categorii speciale</li>
+                    </ul>
+                    <div class="ai-indicator">
+                        <i class="fas fa-microchip ai-icon"></i> Asistent virtual UPB - Admitere 2025
+                    </div>
+                </div>
+            </div>
+            
+            <div class="suggestions" id="suggestions">
+                <div class="suggestion">Când este înscrierea?</div>
+                <div class="suggestion">Ce probe sunt la Automatică?</div>
+                <div class="suggestion">Care sunt documentele necesare?</div>
+                <div class="suggestion">Există scutiri de taxă?</div>
+            </div>
+            
+            <div class="input-area">
+                <input type="text" id="userInput" placeholder="Scrie întrebarea ta aici..." autocomplete="off">
+                <button id="sendBtn"><i class="fas fa-paper-plane"></i> Trimite</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatContainer = document.getElementById('chatContainer');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const suggestions = document.querySelectorAll('.suggestion');
+        
+        // Date curente
+        const currentDate = new Date();
+        const formattedDate = currentDate.toLocaleDateString('ro-RO', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric'
+        });
+        
+        // Adăugăm evenimente pentru sugestii
+        suggestions.forEach(suggestion => {
+            suggestion.addEventListener('click', () => {
+                sendMessage(suggestion.textContent);
+            });
+        });
+        
+        // Funcția pentru adăugare mesaj în chat
+        function addMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            
+            const timestamp = new Date().toLocaleTimeString('ro-RO', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            messageDiv.innerHTML = `${text}<span class="timestamp">${timestamp}</span>`;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            return messageDiv;
+        }
+        
+        // Funcție pentru indicator de tastare
+        function showTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot-message';
+            typingDiv.id = 'typingIndicator';
+            
+            typingDiv.innerHTML = `<div class="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>`;
+            
+            chatContainer.appendChild(typingDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            return typingDiv;
+        }
+        
+        // Funcția pentru a genera răspunsuri
+        function generateResponse(userMessage) {
+            const lowerMessage = userMessage.toLowerCase();
+            
+            if (lowerMessage.includes("bună") || lowerMessage.includes("salut") || lowerMessage.includes("hello")) {
+                return "Bună ziua! Cu ce vă pot ajuta astăzi în legătură cu admiterea la UPB?";
+            }
+            
+            if (lowerMessage.includes("când") || lowerMessage.includes("calendar") || lowerMessage.includes("perioadă")) {
+                return `Calendarul admiterii pentru 2025 este următorul:<br><br>
+                <table class="response-table">
+                    <tr><th>Eveniment</th><th>Perioadă</th></tr>
+                    <tr><td>Înscrieri online</td><td>15 iulie - 27 iulie 2025</td></tr>
+                    <tr><td>Susținerea probelor</td><td>28 iulie - 3 august 2025</td></tr>
+                    <tr><td>Afisarea rezultatelor</td><td>5 august 2025</td></tr>
+                    <tr><td>Contestații</td><td>6-7 august 2025</td></tr>
+                    <tr><td>Rezultate finale</td><td>9 august 2025</td></tr>
+                </table>
+                <br>Astăzi este ${formattedDate}.`;
+            }
+            
+            if (lowerMessage.includes("automat") || lowerMessage.includes("calculatoare")) {
+                return `La <span class="faculty-badge">Automatică și Calculatoare</span> probele sunt:<br><br>
+                <ul>
+                    <li><strong>P1: Matematică</strong> (60 puncte)</li>
+                    <li><strong>P2: Fizică sau Informatică</strong> (la alegere) (60 puncte)</li>
+                    <li><strong>P3: Dosar</strong> (30 puncte) - media bacalaureatului și media anilor de liceu</li>
+                </ul>
+                <strong>Punctaj total</strong>: (P1 + P2) × 80% + P3 × 20%<br><br>
+                Pentru mai multe detalii, vizitați <a href="https://ac.pub.ro" class="info-link" target="_blank">ac.pub.ro</a>`;
+            }
+            
+            if (lowerMessage.includes("electron")) {
+                return `La <span class="faculty-badge">Electronică, Telecomunicații și Tehnologia Informației</span> probele sunt:<br><br>
+                <ul>
+                    <li><strong>P1: Matematică</strong> (60 puncte)</li>
+                    <li><strong>P2: Fizică</strong> (60 puncte)</li>
+                    <li><strong>P3: Dosar</strong> (30 puncte) - media bacalaureatului și media anilor de liceu</li>
+                </ul>
+                <strong>Punctaj total</strong>: (P1 + P2) × 80% + P3 × 20%`;
+            }
+            
+            if (lowerMessage.includes("document") || lowerMessage.includes("necesar")) {
+                return `Documentele necesare pentru înscrierea la admitere sunt:<br><br>
+                <ul>
+                    <li>Formularul de înscriere completat (online)</li>
+                    <li>Copie după certificatul de naștere</li>
+                    <li>Copie după buletinul de identitate</li>
+                    <li>Copie după diploma de bacalaureat sau adeverință care atestă promovarea bacalaureatului</li>
+                    <li>Adeverință de la școală cu media anilor de liceu (pentru candidații care au susținut bacalaureatul în anul 2025)</li>
+                    <li>Chitanța de plată a taxei de înscriere</li>
+                </ul>
+                Toate documentele se depun online prin platforma de admitere.`;
+            }
+            
+            if (lowerMessage.includes("tax") || lowerMessage.includes("scutir") || lowerMessage.includes("plata")) {
+                return `Taxa de înscriere este de <strong>125 lei</strong>. Există următoarele situații de scutire:<br><br>
+                <ul>
+                    <li>Candidații din familii cu venit pe cap de locuitor sub 1100 lei</li>
+                    <li>Candidații orfani de ambii părinți</li>
+                    <li>Candidații care au obținut medalii la olimpiade naționale sau internaționale în domeniile de concurs</li>
+                </ul>
+                Pentru a beneficia de scutire, trebuie depusă documentația doveditoare.`;
+            }
+            
+            if (lowerMessage.includes("special") || lowerMessage.includes("categori")) {
+                return `Admiterea pentru categorii speciale:<br><br>
+                <ul>
+                    <li><strong>Românii de pretutindeni</strong>: Au locuri speciale, probele sunt aceleași, dar cu un număr de locuri rezervate.</li>
+                    <li><strong>Olimpici</strong>: Pot fi scutiți de probe sau primesc puncte suplimentare în funcție de performanță.</li>
+                    <li><strong>Persoane cu dizabilități</strong>: Se organizează probe adaptate.</li>
+                    <li><strong>Sportivi de performanță</strong>: Au puncte bonus în funcție de nivelul performanței.</li>
+                </ul>
+                Detalii complete găsiți pe <a href="https://admitere.upb.ro" class="info-link" target="_blank">admitere.upb.ro</a>.`;
+            }
+            
+            if (lowerMessage.includes("contact") || lowerMessage.includes("ajutor") || lowerMessage.includes("suport")) {
+                return `Pentru asistență suplimentară, vă puteți adresa:<br><br>
+                <ul>
+                    <li><strong>Biroul de Admitere UPB</strong>: Str. Splaiul Independenței 313, București</li>
+                    <li><strong>Telefon</strong>: 021 402 9100</li>
+                    <li><strong>Email</strong>: admitere@upb.ro</li>
+                    <li><strong>Website</strong>: <a href="https://admitere.upb.ro" class="info-link" target="_blank">admitere.upb.ro</a></li>
+                </ul>
+                Program: Luni-Vineri, 8:00-16:00`;
+            }
+            
+            if (lowerMessage.includes("multumesc") || lowerMessage.includes("mersi")) {
+                return "Cu plăcere! Dacă mai aveți întrebări, sunt aici să vă ajut. Succes la admitere! 🎓";
+            }
+            
+            return `Îmi pare rău, nu am înțeles întrebarea. Vă rog reformulați sau alegeți o sugestie de mai jos.<br><br>
+            Pot răspunde la întrebări despre: calendarul admiterii, probele de concurs, documentele necesare, taxe și scutiri, sau categorii speciale.`;
+        }
+        
+        // Funcția pentru trimitere mesaj
+        function sendMessage(message) {
+            if (!message.trim()) return;
+            
+            // Adăugăm mesajul utilizatorului în chat
+            addMessage(message, 'user');
+            userInput.value = '';
+            userInput.blur();
+            
+            // Arată indicator de tastare
+            const typingIndicator = showTypingIndicator();
+            
+            // Simulăm un răspuns AI după o scurtă întârziere
+            setTimeout(() => {
+                // Generăm răspunsul
+                const aiResponse = generateResponse(message);
+                
+                // Elimină indicatorul de tastare
+                chatContainer.removeChild(typingIndicator);
+                
+                // Adăugăm răspunsul AI
+                const botMessage = addMessage(aiResponse, 'bot');
+                
+                // Adăugăm indicatorul AI
+                const indicator = document.createElement('div');
+                indicator.className = 'ai-indicator';
+                indicator.innerHTML = '<i class="fas fa-microchip ai-icon"></i> Asistent UPB - Răspuns generat';
+                botMessage.appendChild(indicator);
+                
+            }, 1500); // Simulăm întârzierea procesării
+        }
+        
+        // Evenimente pentru trimitere mesaj
+        sendBtn.addEventListener('click', () => {
+            if (userInput.value.trim()) {
+                sendMessage(userInput.value);
+            }
+        });
+        
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && userInput.value.trim()) {
+                sendMessage(userInput.value);
+            }
+        });
+        
+        // Focus automat pe input
+        userInput.focus();
+        
+        // Mesaj de bun venit la încărcarea paginii
+        setTimeout(() => {
+            const welcomeMessage = addMessage("Bun venit la asistentul virtual pentru admiterea la UPB! Cum vă pot ajuta astăzi?", 'bot');
+            const indicator = document.createElement('div');
+            indicator.className = 'ai-indicator';
+            indicator.innerHTML = '<i class="fas fa-microchip ai-icon"></i> Asistent UPB - Admitere 2025';
+            welcomeMessage.appendChild(indicator);
+        }, 1000);
+    </script>
+</body>
+</html>
